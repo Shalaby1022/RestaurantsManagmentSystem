@@ -1,9 +1,13 @@
 
+using Microsoft.OpenApi.Writers;
+using Restaurants.Infrastructure.Seeders;
+using Restaurants.Infrastructure.ServiceExtensions;
+
 namespace Restaurants.API
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +18,22 @@ namespace Restaurants.API
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
+			#region Infrastructure Service Registration 
+			builder.Services.AddInfrastructureExtensionsToRgisterItInMainProgram(builder.Configuration);
+			#endregion
+
+
+
 			var app = builder.Build();
+
+			#region SeedingMechanism 
+			var scope = app.Services.CreateScope();
+			var seeder = scope.ServiceProvider.GetRequiredService<IRestaurantSeeding>();
+
+			 await seeder.SeedAsync();
+
+			#endregion
+
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
