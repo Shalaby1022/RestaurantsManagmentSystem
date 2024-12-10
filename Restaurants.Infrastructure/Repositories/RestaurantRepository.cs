@@ -32,6 +32,18 @@ namespace Restaurants.Infrastructure.Repositories
 			return restaurant;
 		}
 
+		public async Task<bool> DeleteRestaurantAsync(int Id)
+		{
+			var restaurant = await _dbContext.Restaurants.FirstOrDefaultAsync(x => x.Id == Id);
+
+			if (restaurant == null) return false;
+			
+			_dbContext.Restaurants.Remove(restaurant);
+			await _dbContext.SaveChangesAsync();
+
+			return true;
+		}
+
 		public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
 		{
 			try
@@ -88,5 +100,14 @@ namespace Restaurants.Infrastructure.Repositories
 			}
 		}
 
+		public async Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant)
+		{
+			if (restaurant == null) throw new ArgumentNullException(nameof(restaurant));
+
+			 _dbContext.Restaurants.Update(restaurant);
+			 await _dbContext.SaveChangesAsync();
+
+			 return restaurant;
 		}
+	}
 	}
