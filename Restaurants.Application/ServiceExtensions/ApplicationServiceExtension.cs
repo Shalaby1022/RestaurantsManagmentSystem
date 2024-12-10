@@ -17,6 +17,8 @@ namespace Restaurants.Application.ServiceExtensions
 
 			services.AddScoped<IRestaurantService, RestaurantService>();
 
+			services.AddAutoMapper(typeof(ApplicationServiceExtension).Assembly);
+
 		}
 	}
 }
