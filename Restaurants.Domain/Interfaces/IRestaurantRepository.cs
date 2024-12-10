@@ -13,5 +13,8 @@ namespace Restaurants.Domain.Interfaces
 
 		Task<Restaurant> GetRestaurantByIdAsync(int id);
 
+		Task<Restaurant> CreateNewRestaurantAsync(Restaurant restaurant);
+
+
 	}
 }

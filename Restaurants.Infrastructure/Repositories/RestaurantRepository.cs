@@ -23,11 +23,21 @@ namespace Restaurants.Infrastructure.Repositories
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));	
 		}
 
+		public async Task<Restaurant> CreateNewRestaurantAsync(Restaurant restaurant)
+		{
+			if (restaurant == null) throw new ArgumentNullException(nameof(restaurant));
+
+			await _dbContext.Restaurants.AddAsync(restaurant);
+			await _dbContext.SaveChangesAsync();
+			return restaurant;
+		}
+
 		public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
 		{
 			try
 			{
 				var restaurantsFromDb = await _dbContext.Restaurants
+														.Include(d=>d.Dishes)										
 														.ToListAsync();
 
 				if (restaurantsFromDb == null || !restaurantsFromDb.Any())
@@ -58,6 +68,7 @@ namespace Restaurants.Infrastructure.Repositories
 				}
 
 				var restaurant = await _dbContext.Restaurants
+												  .Include (d=>d.Dishes)
 												  .FirstOrDefaultAsync(r => r.Id == id);
 
 

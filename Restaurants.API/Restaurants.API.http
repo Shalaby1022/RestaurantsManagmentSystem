@@ -9,6 +9,6 @@ GET {{Restaurants.API_HostAddress}}/restaurant
 
 ###
 
-GET {{Restaurants.API_HostAddress}}/restaurant/{restaurantId:int}?restaurantId=1
+GET {{Restaurants.API_HostAddress}}/restaurant/1
 
 ###
