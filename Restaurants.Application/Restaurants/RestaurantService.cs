@@ -56,7 +56,7 @@ namespace Restaurants.Application.Restaurants
 				throw;
 			}
 		}
-
+	
 		public async Task<bool> DeleteRestaurantAsync(int Id)
 		{
 			if (Id <= 0)

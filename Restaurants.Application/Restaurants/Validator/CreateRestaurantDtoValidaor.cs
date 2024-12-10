@@ -34,6 +34,10 @@ namespace Restaurants.Application.Restaurants.Validator
 				// Another 
 				.Must( categry => validCategories.Contains(categry));
 			   
+				
+			}
+
+
 			RuleFor(R => R.ContanctEmail)
 				.NotEmpty()
 				.EmailAddress()
