@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Restaurants.DTOS;
 using Restaurants.Domain.Entities;
@@ -55,7 +56,38 @@ namespace Restaurants.Application.Restaurants
 				throw;
 			}
 		}
-	
+
+		public async Task<bool> DeleteRestaurantAsync(int Id)
+		{
+			if (Id <= 0)
+			{
+				_logger.LogWarning("Invalid restaurant ID: {Id}", Id);
+				throw new ArgumentException("Restaurant ID must be greater than zero.", nameof(Id));
+			}
+
+			try
+			{
+				_logger.LogInformation("Attempting to delete a restaurant with ID: {Id}", Id);
+
+				var restaurantToBeDeleted = await _restaurantRepository.GetRestaurantByIdAsync(Id);
+				if (restaurantToBeDeleted == null)
+				{
+					_logger.LogInformation("No restaurant found with ID: {Id}. Deletion aborted.", Id);
+					return false;
+				}
+
+				await _restaurantRepository.DeleteRestaurantAsync(Id);
+
+				_logger.LogInformation("Successfully deleted the restaurant with ID: {Id}", Id);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while deleting the restaurant with ID {Id}.", Id);
+				throw;
+			}
+		}
+
 
 		public async Task<IEnumerable<GetRestaurantDTO>> GetAllRestaurantAsync()
 		{
@@ -73,6 +105,40 @@ namespace Restaurants.Application.Restaurants
 		   var restaurantToBeMappedToDto =  _mapper.Map<GetRestaurantDTO>(getASpecificRestaurant);
 
 			return restaurantToBeMappedToDto;
+		}
+
+		public async Task<UpdateRestaurantDto?> UpdateAnExistingRestaurant ( int Id , UpdateRestaurantDto restaurantDto)
+		{
+			if (restaurantDto == null)
+			{
+				_logger.LogWarning("Attempted to update a null restaurant entity.");
+				throw new ArgumentNullException(nameof(restaurantDto), "Restaurant entity cannot be null.");
+			}
+
+			try
+			{
+				var restaurantEntity = await _restaurantRepository.GetRestaurantByIdAsync(Id);
+
+				if (restaurantEntity == null)
+				{
+					_logger.LogInformation("Restaurant with ID {RestaurantId} not found.", Id);
+					return null;
+				}
+
+				_mapper.Map(restaurantDto, restaurantEntity);
+
+				var updatedRestaurant = await _restaurantRepository.UpdateRestaurantAsync(restaurantEntity);
+
+				_logger.LogInformation("Restaurant with ID {RestaurantId} successfully updated.", Id);
+
+				return _mapper.Map<UpdateRestaurantDto>(updatedRestaurant);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while updating the restaurant with ID {RestaurantId}.", Id);
+				throw;
+			}
+
 		}
 	}
 }

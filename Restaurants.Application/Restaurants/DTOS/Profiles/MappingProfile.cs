@@ -38,6 +38,25 @@ namespace Restaurants.Application.Restaurants.DTOS.Profiles
 				.ForPath(dest => dest.Country, opt => opt.MapFrom(src => src.Address.Country))
 				.ForPath(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Address.PhoneNumber));
 
+			CreateMap<UpdateRestaurantDto , Restaurant>()
+					.ForMember(a => a.Address, opt => opt.MapFrom(
+					src => new Address
+					{
+						Street = src.Street,
+						City = src.City,
+						PostalCode = src.PostalCode,
+						Country = src.Country,
+						PhoneNumber = src.PhoneNumber
+					}))
+				.ReverseMap()
+				.ForPath(dest => dest.Street, opt => opt.MapFrom(src => src.Address.Street))
+				.ForPath(dest => dest.City, opt => opt.MapFrom(src => src.Address.City))
+				.ForPath(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Address.PostalCode))
+				.ForPath(dest => dest.Country, opt => opt.MapFrom(src => src.Address.Country))
+				.ForPath(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Address.PhoneNumber));
+
+
+
 
 
 		}

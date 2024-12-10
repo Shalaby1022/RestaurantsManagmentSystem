@@ -94,8 +94,70 @@ namespace Restaurants.API.Controllers
 				return StatusCode(500, "Internal server error");
 			}
 		}
-	}
 
+		[HttpDelete("{restaurantId:int}", Name = nameof(DeleteRestaurant))]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+		[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		public async Task<IActionResult> DeleteRestaurant([FromRoute] int restaurantId)
+		{
+			try
+			{
+				var isDeleted = await _restaurantService.DeleteRestaurantAsync(restaurantId);
+
+				if (!isDeleted)
+				{
+					_logger.LogInformation("Restaurant with ID {RestaurantId} not found.", restaurantId);
+					return NotFound($"Restaurant with ID {restaurantId} not found.");
+				}
+
+				_logger.LogInformation("Restaurant with ID {RestaurantId} successfully deleted.", restaurantId);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while deleting the restaurant with ID {RestaurantId}.", restaurantId);
+				return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+			}
+
+		}
+
+		[HttpPut("{resturantId:long}", Name = nameof(UpdateRestaurant))]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+		[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+		public async Task<IActionResult> UpdateRestaurant(int resturantId , UpdateRestaurantDto restaurantDto)
+		{
+			if (!ModelState.IsValid)
+			{
+				_logger.LogError($"Invalid Update attempt in {nameof(UpdateRestaurant)}");
+				return BadRequest(ModelState);
+			}
+
+			try
+			{
+				if (restaurantDto == null) return BadRequest(ModelState);
+
+				var updateedRestaurant = await _restaurantService.UpdateAnExistingRestaurant(resturantId, restaurantDto);
+
+				return StatusCode(201, updateedRestaurant);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"An error occurred while updating an exisitng Restaurant {nameof(UpdateRestaurant)}.");
+				return StatusCode(500, "Internal server error");
+			}
+		}
+
+	}
 
 }
 
