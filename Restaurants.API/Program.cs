@@ -1,5 +1,6 @@
 
 using Microsoft.OpenApi.Writers;
+using Restaurants.Application.ServiceExtensions;
 using Restaurants.Infrastructure.Seeders;
 using Restaurants.Infrastructure.ServiceExtensions;
 
@@ -13,13 +14,23 @@ namespace Restaurants.API
 
 			// Add services to the container.
 
-			builder.Services.AddControllers();
+			builder.Services.AddControllers()
+							.AddJsonOptions(options =>
+							{
+								options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+								options.JsonSerializerOptions.MaxDepth = 64;
+							});
+
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
 			#region Infrastructure Service Registration 
 			builder.Services.AddInfrastructureExtensionsToRgisterItInMainProgram(builder.Configuration);
+			#endregion
+
+			#region Application Service Registration 
+			builder.Services.AddApplicationExtensionsToRgisterItInMainProgram(builder.Configuration);
 			#endregion
 
 
