@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Application.Restaurants;
 using System;
@@ -19,6 +21,8 @@ namespace Restaurants.Application.ServiceExtensions
 
 			services.AddAutoMapper(typeof(ApplicationServiceExtension).Assembly);
 
+			services.AddValidatorsFromAssembly(typeof(ApplicationServiceExtension).Assembly)
+				.AddFluentValidationAutoValidation();
 		}
 	}
 }
