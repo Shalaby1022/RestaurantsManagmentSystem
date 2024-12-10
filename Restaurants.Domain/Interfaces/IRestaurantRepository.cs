@@ -15,6 +15,10 @@ namespace Restaurants.Domain.Interfaces
 
 		Task<Restaurant> CreateNewRestaurantAsync(Restaurant restaurant);
 
+		Task<bool> DeleteRestaurantAsync(int Id);
+
+		Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant);
+
 
 	}
 }
