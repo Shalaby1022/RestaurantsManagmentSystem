@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Restaurants;
+using Restaurants.Application.Restaurants.DTOS;
+using Restaurants.Domain.Entities;
 
 namespace Restaurants.API.Controllers
 {
@@ -13,9 +16,9 @@ namespace Restaurants.API.Controllers
 		private readonly IRestaurantService _restaurantService;
 		private readonly ILogger<RestaurantController> _logger;
 
-		public RestaurantController(IRestaurantService restaurantService , 
+		public RestaurantController(IRestaurantService restaurantService,
 									ILogger<RestaurantController> logger)
-        {
+		{
 			_restaurantService = restaurantService ?? throw new ArgumentNullException(nameof(restaurantService));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
@@ -54,7 +57,7 @@ namespace Restaurants.API.Controllers
 		{
 			var restaurant = await _restaurantService.GetRestaurantByIdAsync(restaurantId);
 
-			if(restaurant == null)
+			if (restaurant == null)
 			{
 				return NotFound();
 			}
@@ -62,7 +65,37 @@ namespace Restaurants.API.Controllers
 			return Ok(restaurant);
 		}
 
+		[HttpPost(Name = nameof(CreateRestaurant))]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+		[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
+		public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantDto restaurantDto)
+		{
+			if (!ModelState.IsValid)
+			{
+				_logger.LogError($"Invalid POST attempt in {nameof(CreateRestaurant)}");
+				return BadRequest(ModelState);
+			}
+			try
+			{
+				if (restaurantDto == null) return BadRequest(ModelState);
+
+				var createdRestauratns = await _restaurantService.CreateRestaurantAsync(restaurantDto);
+
+				return StatusCode(201, createdRestauratns);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"An error occurred while creating and adding new Restaurant {nameof(CreateRestaurant)}.");
+				return StatusCode(500, "Internal server error");
+			}
+		}
 	}
+
+
 }
 
