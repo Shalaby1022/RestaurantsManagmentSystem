@@ -39,10 +39,7 @@ namespace Restaurants.API
 			builder.Host.UseSerilog((context, configuration) =>
 			{
 				configuration
-				.MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) // remove the redundant noise info retrieved adn override it for more cleaner ones that help 
-				.MinimumLevel.Override("Microsoft.EntityFrameWorkCore", Serilog.Events.LogEventLevel.Information)  // capture logs about excuted request 
-				.WriteTo.Console(outputTemplate: "[{Timestamp: dd-MM HH:mm:ss} {Level:u3}] |{SourceContext}| {NewLine}{Message:lj}{NewLine}{Exception}") // Override here to make the source where our request got excuted with modifiying Time Stamp with day and month.
-				.WriteTo.File("Logs/Restaurant-.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true);
+				.ReadFrom.Configuration(context.Configuration);
 			}); 
 
 
