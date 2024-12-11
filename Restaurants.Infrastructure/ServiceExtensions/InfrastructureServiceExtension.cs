@@ -22,7 +22,9 @@ namespace Restaurants.Infrastructure.ServiceExtensions
 			var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 			services.AddDbContext<ApplicationDbContext>(options =>
-					options.UseSqlServer(connectionString));
+					options.UseSqlServer(connectionString)
+					// instead of returning passed pararmeters as like encode ---@_id__ i want actual value pased so i enable this.
+					 .EnableSensitiveDataLogging());
 
 			services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 

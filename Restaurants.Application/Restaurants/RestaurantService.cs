@@ -37,7 +37,7 @@ namespace Restaurants.Application.Restaurants
 
 			try
 			{
-				_logger.LogInformation("Attempting to create a new restaurant: {RestaurantName}", restaurantDto.Name);
+				_logger.LogInformation("Attempting to create a new restaurant: {@RestaurantName}", restaurantDto.Name);
 
 				var restaurantEntity = _mapper.Map<Restaurant>(restaurantDto);
 
@@ -67,23 +67,23 @@ namespace Restaurants.Application.Restaurants
 
 			try
 			{
-				_logger.LogInformation("Attempting to delete a restaurant with ID: {Id}", Id);
+				_logger.LogInformation("Attempting to delete a restaurant with ID: {@Id}", Id);
 
 				var restaurantToBeDeleted = await _restaurantRepository.GetRestaurantByIdAsync(Id);
 				if (restaurantToBeDeleted == null)
 				{
-					_logger.LogInformation("No restaurant found with ID: {Id}. Deletion aborted.", Id);
+					_logger.LogInformation("No restaurant found with ID: {@Id}. Deletion aborted.", Id);
 					return false;
 				}
 
 				await _restaurantRepository.DeleteRestaurantAsync(Id);
 
-				_logger.LogInformation("Successfully deleted the restaurant with ID: {Id}", Id);
+				_logger.LogInformation("Successfully deleted the restaurant with ID: {@Id}", Id);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "An error occurred while deleting the restaurant with ID {Id}.", Id);
+				_logger.LogError(ex, "An error occurred while deleting the restaurant with ID {@Id}.", Id);
 				throw;
 			}
 		}
@@ -121,7 +121,7 @@ namespace Restaurants.Application.Restaurants
 
 				if (restaurantEntity == null)
 				{
-					_logger.LogInformation("Restaurant with ID {RestaurantId} not found.", Id);
+					_logger.LogInformation("Restaurant with ID {@RestaurantId} not found.", Id);
 					return null;
 				}
 
@@ -129,13 +129,13 @@ namespace Restaurants.Application.Restaurants
 
 				var updatedRestaurant = await _restaurantRepository.UpdateRestaurantAsync(restaurantEntity);
 
-				_logger.LogInformation("Restaurant with ID {RestaurantId} successfully updated.", Id);
+				_logger.LogInformation("Restaurant with ID {@RestaurantId} successfully updated.", Id);
 
 				return _mapper.Map<UpdateRestaurantDto>(updatedRestaurant);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "An error occurred while updating the restaurant with ID {RestaurantId}.", Id);
+				_logger.LogError(ex, "An error occurred while updating the restaurant with ID {@RestaurantId}.", Id);
 				throw;
 			}
 

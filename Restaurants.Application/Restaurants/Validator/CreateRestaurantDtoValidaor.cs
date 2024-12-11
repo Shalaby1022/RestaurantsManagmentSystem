@@ -32,10 +32,7 @@ namespace Restaurants.Application.Restaurants.Validator
 				// Custome Validation For Categories 
 				// One way to implement it .Must(validCategories.Contains);
 				// Another 
-				.Must( categry => validCategories.Contains(categry));
-			   
-				
-			}
+				.Must(categry => validCategories.Contains(categry));
 
 
 			RuleFor(R => R.ContanctEmail)
