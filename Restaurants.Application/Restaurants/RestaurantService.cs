@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Restaurants.Application.Exceptions;
 using Restaurants.Application.Restaurants.DTOS;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Interfaces;
@@ -62,7 +63,8 @@ namespace Restaurants.Application.Restaurants
 			if (Id <= 0)
 			{
 				_logger.LogWarning("Invalid restaurant ID: {Id}", Id);
-				throw new ArgumentException("Restaurant ID must be greater than zero.", nameof(Id));
+				throw new NotFoundException(nameof(Restaurant), Id.ToString());
+
 			}
 
 			try
@@ -100,7 +102,8 @@ namespace Restaurants.Application.Restaurants
 
 		public async Task<GetRestaurantDTO> GetRestaurantByIdAsync(int id)
 		{
-			var getASpecificRestaurant = await _restaurantRepository.GetRestaurantByIdAsync(id);
+			
+		 var getASpecificRestaurant = await _restaurantRepository.GetRestaurantByIdAsync(id);
 
 		   var restaurantToBeMappedToDto =  _mapper.Map<GetRestaurantDTO>(getASpecificRestaurant);
 
@@ -112,7 +115,7 @@ namespace Restaurants.Application.Restaurants
 			if (restaurantDto == null)
 			{
 				_logger.LogWarning("Attempted to update a null restaurant entity.");
-				throw new ArgumentNullException(nameof(restaurantDto), "Restaurant entity cannot be null.");
+				throw new NotFoundException(nameof(restaurantDto), Id.ToString());
 			}
 
 			try
