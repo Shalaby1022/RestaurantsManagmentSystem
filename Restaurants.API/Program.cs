@@ -1,5 +1,7 @@
 
 using Microsoft.OpenApi.Writers;
+using Restaurants.API.Extensions;
+using Restaurants.API.Middlewares;
 using Restaurants.Application.ServiceExtensions;
 using Restaurants.Infrastructure.Seeders;
 using Restaurants.Infrastructure.ServiceExtensions;
@@ -14,6 +16,8 @@ namespace Restaurants.API
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
+
+			builder.Services.AddScoped<GlobalErrorHandlingMiddleware>();
 
 			builder.Services.AddControllers()
 							.AddJsonOptions(options =>
@@ -56,6 +60,8 @@ namespace Restaurants.API
 			 await seeder.SeedAsync();
 
 			#endregion
+
+			app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 			#region Serilog 
 			app.UseSerilogRequestLogging();
