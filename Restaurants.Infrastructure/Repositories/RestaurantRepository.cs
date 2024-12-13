@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application;
+using Restaurants.Application.Exceptions;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Interfaces;
 using System;
@@ -75,8 +76,8 @@ namespace Restaurants.Infrastructure.Repositories
 
 				if (id <= 0)
 				{
-					_logger.LogWarning("Invalid restaurant ID: {Id}", id);
-					return null;
+					_logger.LogWarning("Invalid restaurant ID: {@Id}", id);
+					    throw new NotFoundException("Restaurant" , id.ToString());
 				}
 
 				var restaurant = await _dbContext.Restaurants
@@ -86,8 +87,8 @@ namespace Restaurants.Infrastructure.Repositories
 
 				if (restaurant == null)
 				{
-					_logger.LogInformation("Restaurant not found with ID: {Id}", id);
-					return null;
+					_logger.LogInformation("Restaurant not found with ID: {@Id}", id);
+					     throw new NotFoundException(nameof(restaurant) , id.ToString());
 				}
 
 				_logger.LogInformation($"Restaurant found: {restaurant.Name}");

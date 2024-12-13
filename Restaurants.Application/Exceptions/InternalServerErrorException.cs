@@ -8,7 +8,7 @@ namespace Restaurants.Application.Exceptions
 {
 	public class InternalServerErrorException : Exception
 	{
-		public InternalServerErrorException(string resourceType, string resourceIdentifier) : 
-			base($"{resourceType} with id: {resourceIdentifier} isn't found") { }
+		public InternalServerErrorException(string message) : 
+			base(message) { }
 	}
 }

@@ -16,6 +16,11 @@ namespace Restaurants.Application.Dishes.Profiles
 			CreateMap<Dish, GetDishDto>()
 			.ReverseMap();
 
+			CreateMap<CreateDishDto , Dish>()
+				.ReverseMap();
+
+
+
 		}
 	}
 }

@@ -32,6 +32,9 @@ namespace Restaurants.Infrastructure.ServiceExtensions
 
 			services.AddScoped<IRestaurantRepository , RestaurantRepository>();
 
+			services.AddScoped<IDishRepository , DishRepository>();
+
+
 		}
 	}
 }

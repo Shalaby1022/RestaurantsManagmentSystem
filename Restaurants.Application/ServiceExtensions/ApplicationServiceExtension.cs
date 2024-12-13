@@ -2,7 +2,9 @@
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Restaurants.Application.Dishes;
 using Restaurants.Application.Restaurants;
+using Restaurants.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,7 @@ namespace Restaurants.Application.ServiceExtensions
 		{
 
 			services.AddScoped<IRestaurantService, RestaurantService>();
+			services.AddScoped<IDIshService , DishService>();
 
 			services.AddAutoMapper(typeof(ApplicationServiceExtension).Assembly);
 
