@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Restaurants;
 using Restaurants.Application.Restaurants.DTOS;
@@ -10,6 +11,7 @@ namespace Restaurants.API.Controllers
 	[Route("restaurant")]
 	[Produces("application/json", "application/xml")]
 	[Consumes("application/json", "application/xml")]
+	[Authorize]
 
 	public class RestaurantController : ControllerBase
 	{
@@ -29,6 +31,7 @@ namespace Restaurants.API.Controllers
 		[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
 		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetAllRestaurants()
 		{
 

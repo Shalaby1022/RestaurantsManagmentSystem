@@ -1,8 +1,10 @@
 
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 using Restaurants.API.Extensions;
 using Restaurants.API.Middlewares;
 using Restaurants.Application.ServiceExtensions;
+using Restaurants.Domain.Entities;
 using Restaurants.Infrastructure.Seeders;
 using Restaurants.Infrastructure.ServiceExtensions;
 using Serilog;
@@ -15,38 +17,22 @@ namespace Restaurants.API
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
 
-			builder.Services.AddScoped<GlobalErrorHandlingMiddleware>();
+			#region API Service Registration 
 
-			builder.Services.AddControllers()
-							.AddJsonOptions(options =>
-							{
-								options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-								options.JsonSerializerOptions.MaxDepth = 64;
-							});
+			builder.AddPresentationExtensionsToRgisterItInMainProgram();
 
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+			#endregion
 
 			#region Infrastructure Service Registration 
+
 			builder.Services.AddInfrastructureExtensionsToRgisterItInMainProgram(builder.Configuration);
+
 			#endregion
 
 			#region Application Service Registration 
+
 			builder.Services.AddApplicationExtensionsToRgisterItInMainProgram(builder.Configuration);
-			#endregion
-
-
-			#region Serilog Registration 
-			builder.Host.UseSerilog((context, configuration) =>
-			{
-				configuration
-				.ReadFrom.Configuration(context.Configuration);
-			}); 
-
-
 
 			#endregion
 
@@ -76,6 +62,13 @@ namespace Restaurants.API
 
 			app.UseHttpsRedirection();
 
+			app.MapGroup("/identity")
+		   .WithTags("Identity") 
+		   .MapIdentityApi<ApplicationUser>();
+
+
+			app.MapIdentityApi<ApplicationUser>();
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 
