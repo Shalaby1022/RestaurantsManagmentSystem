@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurants.Application;
 using Restaurants.Domain.Entities;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Restaurants.Infrastructure.Persistance.Data
 {
-	public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
+	public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{
