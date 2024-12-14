@@ -21,8 +21,8 @@ namespace Restaurants.Application.Restaurants.DTOS.Profiles
                     .ForMember(D => D.Dishes, opt => opt.MapFrom(src => src.Dishes));
 
 
-			CreateMap<CreateRestaurantDto, Restaurant>()
-				.ForMember(a => a.Address, opt => opt.MapFrom(
+				CreateMap<CreateRestaurantDto, Restaurant>()
+					.ForMember(a => a.Address, opt => opt.MapFrom(
 					src => new Address
 					{
 						Street = src.Street,

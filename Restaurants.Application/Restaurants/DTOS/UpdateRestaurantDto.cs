@@ -23,3 +23,4 @@ namespace Restaurants.Application.Restaurants.DTOS
 		public string PhoneNumber { get; set; } = string.Empty;
 	}
 }
+	

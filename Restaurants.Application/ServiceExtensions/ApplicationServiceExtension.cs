@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Application.Dishes;
 using Restaurants.Application.Restaurants;
+using Restaurants.Application.Users;
+using Restaurants.Application.Users.Services;
 using Restaurants.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,14 @@ namespace Restaurants.Application.ServiceExtensions
 
 			services.AddValidatorsFromAssembly(typeof(ApplicationServiceExtension).Assembly)
 				.AddFluentValidationAutoValidation();
+
+			services.AddScoped<IUserContext , UserContext>();
+			services.AddHttpContextAccessor();
+
+			services.AddScoped<IUserService, UserService>();
+
+
+
 		}
 	}
 }
