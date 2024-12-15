@@ -87,7 +87,55 @@ namespace Restaurants.Application.Users.Services
 		}
 
 
-		public async Task<bool> UpdateUserService(UpdateUserDetailsDto userDetails)
+		public async Task DeleteRolesFromAUserAsync(DeleteUSerFromASpecificRoles RolesToUsersDto)
+		{
+			if (RolesToUsersDto == null)
+				throw new NotFoundException(nameof(RolesToUsersDto), RolesToUsersDto.Email);
+
+			if (string.IsNullOrEmpty(RolesToUsersDto.Email))
+				throw new ArgumentException("UserId must not be null or empty.", nameof(RolesToUsersDto.Email));
+
+			if (RolesToUsersDto.Roles == null || !RolesToUsersDto.Roles.Any())
+				throw new ArgumentException("Roles must not be null or empty.", nameof(RolesToUsersDto.Roles));
+
+			var user = await _userManager.FindByEmailAsync(RolesToUsersDto.Email);
+
+			if (user == null)
+			{
+				_logger.LogWarning($"User with ID {RolesToUsersDto.Email} not found.");
+				throw new NotFoundException(nameof(ApplicationUser), RolesToUsersDto.Email);
+			}
+
+			foreach (var role in RolesToUsersDto.Roles)
+			{
+				// Check if the role exists
+				var roleExists = await _roleManager.RoleExistsAsync(role);
+				if (!roleExists)
+				{
+					_logger.LogWarning($"Role {role} does not exist.");
+					throw new NotFoundException(nameof(IdentityRole), role);
+				}
+
+				// Check if the user is already in the role
+				var isAlreadyInRole = await _userManager.IsInRoleAsync(user, role);
+				if (isAlreadyInRole)
+				{
+					_logger.LogInformation($"User {user.Id} is already in role {role}.");
+					continue;
+				}
+
+				var result = await _userManager.RemoveFromRoleAsync(user, role);
+				if (!result.Succeeded)
+				{
+					var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+					_logger.LogError($"Failed to remove user {user.Id} from role {role}. Errors: {errors}");
+					throw new Exception($"Failed to remove user from role {role}. Errors: {errors}");
+				}
+
+				_logger.LogInformation($"Successfully removed user {user.Id} from role {role}.");
+		}
+	}
+			public async Task<bool> UpdateUserService(UpdateUserDetailsDto userDetails)
 		{
 			var currentUser = _userContext.GetCurrentUSer();
 

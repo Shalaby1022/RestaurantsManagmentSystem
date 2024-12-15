@@ -12,5 +12,7 @@ namespace Restaurants.Application.Users.Services
 		Task<bool> UpdateUserService(UpdateUserDetailsDto userDetails); 
 		Task AssignRolesToUsersAsync(AssignRolesTOUSersDto assignRolesTOUSersDto);
 
+		Task DeleteRolesFromAUserAsync(DeleteUSerFromASpecificRoles RolesToUsersDto);
+
 	}
 }
