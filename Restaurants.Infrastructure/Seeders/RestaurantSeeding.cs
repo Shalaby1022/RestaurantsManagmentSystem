@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using Restaurants.Application;
 using Restaurants.Domain.Entities;
+using Restaurants.Domain.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +44,7 @@ namespace Restaurants.Infrastructure.Seeders
 				{
 					_logger.LogInformation("The Restaurants database is already seeded.");
 				}
+
 			}
 			catch (Exception ex)
 			{
@@ -48,6 +53,19 @@ namespace Restaurants.Infrastructure.Seeders
 		}
 
 
+		private IEnumerable<IdentityRole> GetRoles()
+		{
+			List<IdentityRole> roles =
+				[
+				  new (Domain.Utilities.IdentityConstants.Admin),
+				  new (Domain.Utilities.IdentityConstants.Owner),
+				  new (Domain.Utilities.IdentityConstants.User)
+				];
+
+			return roles;
+		}
+
+			
 		private IEnumerable<Restaurant> GetRestaurants()
 		{
 			return new List<Restaurant>

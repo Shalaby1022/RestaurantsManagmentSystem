@@ -1,7 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Application;
+using Restaurants.Application.Users.EmailSenderUtility;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Interfaces;
 using Restaurants.Infrastructure.Persistance.Data;
@@ -37,8 +42,35 @@ namespace Restaurants.Infrastructure.ServiceExtensions
 
 
 			// identity 
-			services.AddIdentityApiEndpoints<ApplicationUser>()
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+
+			services.AddAuthorization();
+
+			services.AddIdentity<ApplicationUser, IdentityRole>()
+			.AddEntityFrameworkStores<ApplicationDbContext>()
+			.AddDefaultTokenProviders()
+			.AddSignInManager<SignInManager<ApplicationUser>>();
+
+			//
+			services.AddAuthentication()
+					.AddBearerToken(IdentityConstants.BearerScheme);
+
+			services.AddAuthorization();
+
+			////
+
+			//services.AddAuthentication(
+			//o =>
+			//{
+			//	o.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+			//	o.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+			//	o.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+			//})
+			//.AddCookie(options =>
+			//{
+			//	options.LoginPath = "/identity/Unauthorized/";
+			//	options.AccessDeniedPath = "/identity/Forbidden/";
+			//});
+
 		}
 	}
 }
