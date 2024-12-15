@@ -1,13 +1,19 @@
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 using Restaurants.API.Extensions;
 using Restaurants.API.Middlewares;
 using Restaurants.Application.ServiceExtensions;
+using Restaurants.Application.Users.EmailSenderUtility;
 using Restaurants.Domain.Entities;
+using Restaurants.Infrastructure.Persistance.Data;
 using Restaurants.Infrastructure.Seeders;
 using Restaurants.Infrastructure.ServiceExtensions;
 using Serilog;
+
 
 namespace Restaurants.API
 {
@@ -36,6 +42,13 @@ namespace Restaurants.API
 
 			#endregion
 
+			builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSender>();
+			builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.IEmailSender<ApplicationUser>, EmailSender>();
+
+
+
+
+
 
 			var app = builder.Build();
 
@@ -62,12 +75,11 @@ namespace Restaurants.API
 
 			app.UseHttpsRedirection();
 
+
 			app.MapGroup("/identity")
-		   .WithTags("Identity") 
-		   .MapIdentityApi<ApplicationUser>();
+			   .WithTags("Identity")
+			   .MapIdentityApi<ApplicationUser>();
 
-
-			app.MapIdentityApi<ApplicationUser>();
 			app.UseAuthentication();
 			app.UseAuthorization();
 

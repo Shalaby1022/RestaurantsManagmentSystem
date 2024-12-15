@@ -11,7 +11,7 @@ namespace Restaurants.API.Controllers
 	[Route("restaurant")]
 	[Produces("application/json", "application/xml")]
 	[Consumes("application/json", "application/xml")]
-	[Authorize]
+
 
 	public class RestaurantController : ControllerBase
 	{
@@ -31,7 +31,7 @@ namespace Restaurants.API.Controllers
 		[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
 		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[AllowAnonymous]
+
 		public async Task<IActionResult> GetAllRestaurants()
 		{
 
