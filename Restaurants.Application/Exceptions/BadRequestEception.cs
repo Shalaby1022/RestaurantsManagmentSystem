@@ -9,12 +9,6 @@ namespace Restaurants.Application.Exceptions
 	public class BadRequestEception : Exception
 	{
 		public BadRequestEception(string resourceType, string resourceIdentifier)
-			: base($"Invalid request: The provided {resourceType} identifier '{resourceIdentifier}' is invalid or malformed.")
-
-		{
-
-		}
-
-
+			: base($"Invalid request: The provided {resourceType} identifier '{resourceIdentifier}' is invalid or malformed.") { }
 	}
 }

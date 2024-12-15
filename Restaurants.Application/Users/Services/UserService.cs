@@ -16,20 +16,77 @@ namespace Restaurants.Application.Users.Services
 	{
 		private readonly IUserContext _userContext;
 		private readonly IUserStore<ApplicationUser> _userStore;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly IMapper _mapper;
 		private readonly ILogger<UserService> _logger;
 		private CancellationToken cancellationToken;
 
-		public UserService(IUserContext userContext ,
-							IUserStore<ApplicationUser> userStore ,
-							IMapper mapper ,
-							ILogger<UserService> logger) 
+		public UserService(IUserContext userContext,
+				   IUserStore<ApplicationUser> userStore,
+				   UserManager<ApplicationUser> userManager,
+				   RoleManager<IdentityRole> roleManager,
+				   IMapper mapper,
+				   ILogger<UserService> logger)
 		{
 			_userContext = userContext ?? throw new ArgumentNullException(nameof(userContext));
 			_userStore = userStore ?? throw new ArgumentNullException(nameof(userStore));
+			_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+			_roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
 			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
+
+		public async Task AssignRolesToUsersAsync(AssignRolesTOUSersDto assignRolesToUsersDto)
+		{
+			if (assignRolesToUsersDto == null)
+				throw new NotFoundException(nameof(assignRolesToUsersDto) , assignRolesToUsersDto.UserId);
+
+			if (string.IsNullOrEmpty(assignRolesToUsersDto.UserId))
+				throw new ArgumentException("UserId must not be null or empty.", nameof(assignRolesToUsersDto.UserId));
+
+			if (assignRolesToUsersDto.Roles == null || !assignRolesToUsersDto.Roles.Any())
+				throw new ArgumentException("Roles must not be null or empty.", nameof(assignRolesToUsersDto.Roles));
+
+			var user = await _userStore.FindByIdAsync(assignRolesToUsersDto.UserId, cancellationToken);
+
+			if (user == null)
+			{
+				_logger.LogWarning($"User with ID {assignRolesToUsersDto.UserId} not found.");
+				throw new NotFoundException(nameof(ApplicationUser), assignRolesToUsersDto.UserId);
+			}
+
+			foreach (var role in assignRolesToUsersDto.Roles)
+			{
+				// Check if the role exists
+				var roleExists = await _roleManager.RoleExistsAsync(role);
+				if (!roleExists)
+				{
+					_logger.LogWarning($"Role {role} does not exist.");
+					throw new NotFoundException(nameof(IdentityRole), role);
+				}
+
+				// Check if the user is already in the role
+				var isAlreadyInRole = await _userManager.IsInRoleAsync(user, role);
+				if (isAlreadyInRole)
+				{
+					_logger.LogInformation($"User {user.Id} is already in role {role}.");
+					continue; 
+				}
+
+				// Assign the role to the user
+				var result = await _userManager.AddToRoleAsync(user, role);
+				if (!result.Succeeded)
+				{
+					var errorDetails = string.Join(", ", result.Errors.Select(e => e.Description));
+					_logger.LogError($"Failed to assign role {role} to user {user.Id}: {errorDetails}");
+					throw new ApplicationException($"Failed to assign role {role} to user {user.Id}: {errorDetails}");
+				}
+				_logger.LogInformation($"Role {role} assigned to user {user.Id} successfully.");
+			}
+		}
+
+
 		public async Task<bool> UpdateUserService(UpdateUserDetailsDto userDetails)
 		{
 			var currentUser = _userContext.GetCurrentUSer();

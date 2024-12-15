@@ -6,12 +6,7 @@ using Restaurants.Application.Dishes;
 using Restaurants.Application.Restaurants;
 using Restaurants.Application.Users;
 using Restaurants.Application.Users.Services;
-using Restaurants.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Restaurants.Application.ServiceExtensions
 {
@@ -33,7 +28,6 @@ namespace Restaurants.Application.ServiceExtensions
 			services.AddHttpContextAccessor();
 
 			services.AddScoped<IUserService, UserService>();
-
 
 
 		}

@@ -10,5 +10,7 @@ namespace Restaurants.Application.Users.Services
 	public interface IUserService
 	{
 		Task<bool> UpdateUserService(UpdateUserDetailsDto userDetails); 
+		Task AssignRolesToUsersAsync(AssignRolesTOUSersDto assignRolesTOUSersDto);
+
 	}
 }
