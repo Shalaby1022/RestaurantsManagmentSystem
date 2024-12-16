@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Restaurants.API.Common;
 using Restaurants.Application.Exceptions;
+using Restaurants.Application.Parameters;
 using Restaurants.Application.Restaurants.DTOS;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Interfaces;
@@ -91,14 +93,28 @@ namespace Restaurants.Application.Restaurants
 		}
 
 
-		public async Task<IEnumerable<GetRestaurantDTO>> GetAllRestaurantAsync()
+		public async Task<PagedResult<GetRestaurantDTO>> GetAllRestaurantAsync(ResourceParameters resourceParameters)
 		{
-			var restuarntsRetrieved = await _restaurantRepository.GetAllRestaurantsAsync();
+			try
+			{
+				var (restaurantsRetrieved , totalCount) = await _restaurantRepository.GetAllRestaurantsWithQueryParamsAsync(resourceParameters.SearchQuery ,
+																												resourceParameters.PageNumber ,
+																												resourceParameters.PageSize);
 
-			var restarauntsTOBeMappedToDto =  _mapper.Map<IEnumerable<GetRestaurantDTO>>(restuarntsRetrieved);
 
-			return restarauntsTOBeMappedToDto;
+				var restaurantsToBeMappedToDto = _mapper.Map<IEnumerable<GetRestaurantDTO>>(restaurantsRetrieved);
+				_logger.LogInformation($"Mapped {restaurantsToBeMappedToDto.Count()} restaurants to DTO.");
+
+				var result = new PagedResult<GetRestaurantDTO>(restaurantsToBeMappedToDto , totalCount, resourceParameters.PageNumber , resourceParameters.PageSize);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while retrieving and mapping restaurants.");
+				throw;
+			}
 		}
+
 
 		public async Task<GetRestaurantDTO> GetRestaurantByIdAsync(int id)
 		{
