@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Logging;
 using Restaurants.Application;
 using Restaurants.Application.Exceptions;
+using Restaurants.Application.Parameters;
 using Restaurants.Domain.Entities;
 using Restaurants.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -69,19 +71,41 @@ namespace Restaurants.Infrastructure.Repositories
 			}
 		}
 
-		public async Task<(IEnumerable<Restaurant> , int)> GetAllRestaurantsWithQueryParamsAsync(string? searchQuery , int pageNumber , int pageSize)
+		public async Task<(IEnumerable<Restaurant> , int)> GetAllRestaurantsWithQueryParamsAsync(string? searchQuery , 
+																									int pageNumber ,
+																									int pageSize ,
+																									string? sortBy , 
+																									SortDirection sortDirection)
 		{
 			try
 			{
+				// Filtering
 				var searchQueryTrimmed = searchQuery?.ToLower();
-
 				var baseQuery = _dbContext.Restaurants
 						.Where(r => string.IsNullOrEmpty(searchQuery) ||
 									r.Name.ToLower().Contains(searchQueryTrimmed) ||
 									r.Description.ToLower().Contains(searchQueryTrimmed));
 
+				// Get Total Counts For pagination purpose
 				var totalCount =  baseQuery.Count();
 
+				// Sorting 
+				if (sortBy != null)
+				{
+					var coloumnsSelected = new Dictionary<string, Expression<Func<Restaurant, object>>>
+					{
+						{nameof(Restaurant.Name) , r => r.Name },
+						{nameof(Restaurant.Description) , r => r.Description },
+						{nameof(Restaurant.Category) , r=> r.Category}
+					};
+
+					var selectedColoumns = coloumnsSelected[sortBy];
+					baseQuery = sortDirection == SortDirection.Ascending
+						? baseQuery.OrderBy(selectedColoumns)
+						: baseQuery.OrderByDescending(selectedColoumns);
+				}
+
+				// pagination 
 				var restaurantsFromDb = await baseQuery
 						.Skip(pageSize * (pageNumber -1))
 						.Take(pageSize)

@@ -31,6 +31,7 @@ namespace Restaurants.API.Extensions
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen(c =>
 			{
+		
 				c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
 				{
 					Type = SecuritySchemeType.Http,
@@ -46,6 +47,7 @@ namespace Restaurants.API.Extensions
 					},
 					[]
 				}});
+
 			});
 			#endregion
 

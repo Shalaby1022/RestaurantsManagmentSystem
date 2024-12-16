@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 namespace Restaurants.Application.Parameters.Validator
 {
 	using FluentValidation;
+	using global::Restaurants.Application.Restaurants.DTOS;
+	
 
 	public class ResourceParametersValidator : AbstractValidator<ResourceParameters>
 	{
 		private int[] ValidPageSize = { 5, 10, 15 };
+		private string[] ValidSortByAttributes = [   nameof(GetRestaurantDTO.Name) ,
+													 nameof(GetRestaurantDTO.Description) ,
+												     nameof(GetRestaurantDTO.Category)];
 
 		public ResourceParametersValidator()
 		{
@@ -27,6 +32,13 @@ namespace Restaurants.Application.Parameters.Validator
 			RuleFor(r => r.PageSize)
 				.LessThanOrEqualTo(ValidPageSize.Max())
 				.WithMessage($"Page Size cannot exceed {ValidPageSize.Max()}.");
+
+			RuleFor( r => r.SortBy)
+				.Must(value => ValidSortByAttributes.Contains(value))
+				.When(q => q.SortBy != null)
+				.WithMessage($"Sorting must be one of the following values: {string.Join(", ", ValidSortByAttributes)}");
+
+
 		}
 	}
 }

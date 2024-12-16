@@ -15,5 +15,10 @@ namespace Restaurants.Application.Parameters
 		public int PageNumber { get; set; }
 		public int PageSize { get; set; } = 10;
 
+
+		//Sorting 
+		public string? SortBy { get; set; }
+		public SortDirection SortDirection { get; set; }
+
 	}
 }

@@ -99,7 +99,9 @@ namespace Restaurants.Application.Restaurants
 			{
 				var (restaurantsRetrieved , totalCount) = await _restaurantRepository.GetAllRestaurantsWithQueryParamsAsync(resourceParameters.SearchQuery ,
 																												resourceParameters.PageNumber ,
-																												resourceParameters.PageSize);
+																												resourceParameters.PageSize , 
+																												resourceParameters.SortBy ,
+																												resourceParameters.SortDirection);
 
 
 				var restaurantsToBeMappedToDto = _mapper.Map<IEnumerable<GetRestaurantDTO>>(restaurantsRetrieved);

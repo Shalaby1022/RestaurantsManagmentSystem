@@ -2,7 +2,7 @@
 @port = 5269
 
 
-@Restaurants.API_HostAddress = {{host}}:{{port}}
+@Restaurants.API_HostAddress = https://localhost:7125
 
 GET {{Restaurants.API_HostAddress}}/restaurant
 
@@ -10,5 +10,47 @@ GET {{Restaurants.API_HostAddress}}/restaurant
 ###
 
 GET {{Restaurants.API_HostAddress}}/restaurant/1
+
+###
+
+
+
+
+POST {{Restaurants.API_HostAddress}}/identity/assign-roles
+Content-Type: application/json
+
+{
+  //AssignRolesTOUSersDto
+}
+
+###
+
+DELETE {{Restaurants.API_HostAddress}}/identity/reomve-role
+
+###
+
+PATCH {{Restaurants.API_HostAddress}}/identity/user
+Content-Type: application/json
+
+{
+  //UpdateUserDetailsDto
+}
+
+###
+
+GET {{Restaurants.API_HostAddress}}/restaurant
+
+###
+
+GET {{Restaurants.API_HostAddress}}/restaurant/{restaurantId:int}
+
+###
+
+POST {{Restaurants.API_HostAddress}}/restaurant
+Content-Type: application/json
+
+{
+  //CreateRestaurantDto
+}
 
 ###
