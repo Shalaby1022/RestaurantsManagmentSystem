@@ -1,4 +1,5 @@
-﻿using Restaurants.Domain.Entities;
+﻿using Restaurants.Application.Parameters;
+using Restaurants.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,11 @@ namespace Restaurants.Domain.Interfaces
 	public interface IRestaurantRepository
 	{
 		Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync();
-		Task<(IEnumerable<Restaurant>, int)> GetAllRestaurantsWithQueryParamsAsync(string? searchQuer , int pageNumber , int pageSize);
+		Task<(IEnumerable<Restaurant>, int)> GetAllRestaurantsWithQueryParamsAsync(string? searchQuer , 
+																					int pageNumber , 
+																				    int pageSize , 
+																					string? sortBy ,
+																					SortDirection sortDirection);
 
 		Task<Restaurant> GetRestaurantByIdAsync(int id);
 
