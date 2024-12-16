@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Restaurants.Application.Parameters;
 using Restaurants.Application.Restaurants;
 using Restaurants.Application.Restaurants.DTOS;
 using Restaurants.Domain.Entities;
+
 
 namespace Restaurants.API.Controllers
 {
@@ -32,22 +34,27 @@ namespace Restaurants.API.Controllers
 		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-		public async Task<IActionResult> GetAllRestaurants()
+		public async Task<IActionResult> GetAllRestaurants([FromQuery] ResourceParameters resourceParameters)
 		{
-
 			try
 			{
-				var restaurantsList = await _restaurantService.GetAllRestaurantAsync();
+				if (resourceParameters == null)
+				{
+					_logger.LogError("Resource parameters are null.");
+					return BadRequest("Invalid query parameters.");
+				}
+
+				var restaurantsList = await _restaurantService.GetAllRestaurantAsync(resourceParameters);
 
 				return Ok(restaurantsList);
-
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"An Error Occurred While Retreiveing The Comments Info {nameof(GetAllRestaurants)}");
-				return StatusCode(500);
+				_logger.LogError(ex, $"An Error Occurred While Retrieving Restaurants in {nameof(GetAllRestaurants)}");
+				return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
 			}
 		}
+
 
 		[HttpGet("{restaurantId:int}", Name = nameof(GetRestaurantById))]
 		[ProducesResponseType(StatusCodes.Status200OK)]
