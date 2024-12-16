@@ -69,6 +69,40 @@ namespace Restaurants.Infrastructure.Repositories
 			}
 		}
 
+		public async Task<(IEnumerable<Restaurant> , int)> GetAllRestaurantsWithQueryParamsAsync(string? searchQuery , int pageNumber , int pageSize)
+		{
+			try
+			{
+				var searchQueryTrimmed = searchQuery?.ToLower();
+
+				var baseQuery = _dbContext.Restaurants
+						.Where(r => string.IsNullOrEmpty(searchQuery) ||
+									r.Name.ToLower().Contains(searchQueryTrimmed) ||
+									r.Description.ToLower().Contains(searchQueryTrimmed));
+
+				var totalCount =  baseQuery.Count();
+
+				var restaurantsFromDb = await baseQuery
+						.Skip(pageSize * (pageNumber -1))
+						.Take(pageSize)
+						.ToListAsync();
+
+
+				if (restaurantsFromDb == null || !restaurantsFromDb.Any())
+				{
+					_logger.LogInformation("No restaurants found in the database.");
+				}
+
+				_logger.LogInformation($"Retrieved {restaurantsFromDb.Count} restaurants from the database.");
+				return (restaurantsFromDb , totalCount);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while retrieving restaurants from the database.");
+				throw;
+			}
+		}
+
 		public async Task<Restaurant> GetRestaurantByIdAsync(int id)
 		{
 			try
