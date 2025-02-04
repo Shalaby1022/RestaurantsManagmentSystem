@@ -23,17 +23,6 @@ namespace Restaurants.API.Controllers
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		//[HttpGet(Name = nameof(GetAllDishes))]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
-		//[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
-		//[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-		//[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		//public async Task<IActionResult> GetAllDishes()
-		//{
-
-
-		//}
 
 		[HttpGet(Name = nameof(GetAllDishes))]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -94,7 +83,7 @@ namespace Restaurants.API.Controllers
 			}
 			try
 			{
-				var CreatedDish = await _dIshService.CreateDishAsync(restaurantId, dishDto);
+				var CreatedDish = await _dIshService.CreateDishAsync(restaurantId, dishDto).ConfigureAwait(false);
 				if (CreatedDish == null)
 					throw new NotFoundException(nameof(dishDto), restaurantId.ToString());
 
